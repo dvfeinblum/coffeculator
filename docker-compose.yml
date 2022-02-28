@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=coffeeculator
+    ports:
+      - 5432:5432
