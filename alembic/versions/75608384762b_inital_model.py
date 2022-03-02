@@ -22,14 +22,14 @@ depends_on = None
 def upgrade():
     op.create_table(
         "roaster",
-        Column("id", pg.INTEGER, primary_key=True),
+        Column("id", pg.INTEGER, primary_key=True, autoincrement=True, nullable=False),
         Column("name", pg.TEXT),
         Column("location", pg.TEXT),
     )
 
     op.create_table(
         "coffee",
-        Column("id", pg.INTEGER, primary_key=True),
+        Column("id", pg.INTEGER, primary_key=True, autoincrement=True, nullable=False),
         Column("name", pg.TEXT),
         Column("roaster", pg.INTEGER, ForeignKey("roaster.id")),
         Column("roast", pg.TEXT),
@@ -37,7 +37,7 @@ def upgrade():
 
     op.create_table(
         "brew",
-        Column("id", pg.INTEGER, primary_key=True),
+        Column("id", pg.INTEGER, primary_key=True, autoincrement=True, nullable=False),
         Column("coffee", pg.INTEGER, ForeignKey("coffee.id")),
         Column("method", pg.TEXT),
         Column("dose", pg.NUMERIC),

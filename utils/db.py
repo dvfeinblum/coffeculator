@@ -48,13 +48,14 @@ def create_roaster(session) -> int:
 def create_coffee(session):
     print("Aight, cool. First off, do you see the roaster in this list (y/n)?")
     valid_roasters = list_roasters(session)
-    if input().lower() == "n":
-        roaster_id = create_roaster(session)
-    else:
+    if input().lower() == "y":
         roaster_id = int(input("Okay great; which roaster?\n"))
         if roaster_id not in valid_roasters:
             print("Erm.. that's not a valid roaster.")
             create_coffee(session)
+    else:
+        roaster_id = create_roaster(session)
+
     name = input("Next, what's the name of the coffee?\n")
     new_line = "\n"
     roast = input(
@@ -84,6 +85,7 @@ def create_brew(session):
         f"{new_line.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
     )
     grind_setting = input("What's the grind setting on the grinder?\n")
+    temperature = int(input("What's temp is the water at?\n"))
     dose = float(input("How much coffee are you using (grams)?\n"))
     coffee_out = float(input("How much coffee did you get out (grams)?\n"))
     duration = input("How long was the brew?\n")
@@ -95,6 +97,7 @@ def create_brew(session):
         grinder=Grinder(grinder).name,
         grind_setting=grind_setting,
         dose=dose,
+        temperature=temperature,
         coffee_out=coffee_out,
         duration=duration,
         thoughts=thoughts,

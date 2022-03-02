@@ -11,7 +11,7 @@ if you wanna run this
 1. `make local` which creates your db
 1. `make run-alembic` will create the crap in the db
 
-then a good ole `./brew.py` kick off the coffeeculator!
+then a good ole `make brew` kick off the coffeeculator!
 
 ## todo list
 

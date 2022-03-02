@@ -29,12 +29,13 @@ class Grinder(enum.Enum):
 
 class Brew(Base):
     __tablename__ = "brew"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     coffee = Column(ForeignKey("coffee.id"))
     method = Column(String)
     grinder = Column(String)
     grind_setting = Column(String)
     dose = Column(Numeric)
+    temperature = Column(Integer, primary_key=True)
     coffee_out = Column(Numeric)
     duration = Column(String)
     thoughts = Column(String)
@@ -42,14 +43,15 @@ class Brew(Base):
 
     def __str__(self):
         return (
-            f"Brew {self.id}, a {self.method} made with the {self.grinder} set at {self.grind_setting} on"
+            f"Brew {self.id}: {self.method} @ {self.temperature}ºF made with the {self.grinder} set at"
+            f" {self.grind_setting} on"
             f" {self.date.strftime('%Y-%m-%d at %H:%M:%S')}"
         )
 
 
 class Coffee(Base):
     __tablename__ = "coffee"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     roaster = Column(ForeignKey("roaster.id"))
     roast = Column(String)
@@ -60,7 +62,7 @@ class Coffee(Base):
 
 class Roaster(Base):
     __tablename__ = "roaster"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     location = Column(String)
 
