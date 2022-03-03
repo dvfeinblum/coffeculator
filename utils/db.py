@@ -46,15 +46,21 @@ def create_roaster(session) -> int:
 
 
 def create_coffee(session):
-    print("Aight, cool. First off, do you see the roaster in this list (y/n)?")
+    print(
+        "Which roaster is this coffee from? If you don't see your roaster just press enter.\n"
+    )
     valid_roasters = list_roasters(session)
-    if input().lower() == "y":
-        roaster_id = int(input("Okay great; which roaster?\n"))
-        if roaster_id not in valid_roasters:
+    roaster_id = input()
+    if roaster_id == "":
+        roaster_id = create_roaster(session)
+    else:
+        try:
+            roaster_int = int(roaster_id)
+        except ValueError:
+            roaster_int = "f"
+        if roaster_int not in valid_roasters:
             print("Erm.. that's not a valid roaster.")
             create_coffee(session)
-    else:
-        roaster_id = create_roaster(session)
 
     name = input("Next, what's the name of the coffee?\n")
     new_line = "\n"
@@ -72,7 +78,10 @@ def create_coffee(session):
 def create_brew(session):
     print("Which coffee are we using?")
     valid_coffees = list_coffees(session)
-    coffee_id = int(input())
+    try:
+        coffee_id = int(input())
+    except ValueError:
+        coffee_id = ""
     if coffee_id not in valid_coffees:
         print("Not a valid coffee. Try again!")
         create_brew(session)
