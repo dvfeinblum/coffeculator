@@ -8,8 +8,8 @@ def get_session():
     engine = create_engine(
         "postgresql://postgres:postgres@localhost:5432/coffeeculator"
     )
-    Session = sessionmaker(engine)
-    return Session()
+    session = sessionmaker(engine)
+    return session()
 
 
 def list_objects(session, db_object):

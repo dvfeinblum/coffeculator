@@ -22,7 +22,11 @@ CHOICES = [
 if __name__ == "__main__":
     sesh = get_session()
     print(
-        f"Heyo, welcome to the coffeeculator™\n"
+        f"Heyo, welcome to the"
+        """
+█▀▀ █▀▀█ █▀▀ █▀▀ █▀▀ █▀▀ █▀▀ █░░█ █░░ █▀▀█ ▀▀█▀▀ █▀▀█ █▀▀█™
+█░░ █░░█ █▀▀ █▀▀ █▀▀ █▀▀ █░░ █░░█ █░░ █▄▄█ ░░█░░ █░░█ █▄▄▀
+▀▀▀ ▀▀▀▀ ▀░░ ▀░░ ▀▀▀ ▀▀▀ ▀▀▀ ░▀▀▀ ▀▀▀ ▀░░▀ ░░▀░░ ▀▀▀▀ ▀░▀▀\n"""
         "How about you tell me what you'd like to do?\n"
         "1 - List Coffees\n"
         "2 - List Roasters\n"
