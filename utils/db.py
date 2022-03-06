@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -104,6 +106,15 @@ def create_brew(session):
         print("Not a valid coffee. Try again!")
         create_brew(session)
     method = prompt_method()
+    espresso_mode = method in ("3", "4")
+    if espresso_mode:
+        print(
+            """Entering\n
+███████████████████████████████████████████████████████████████████████████
+█▄─▄▄─█─▄▄▄▄█▄─▄▄─█▄─▄▄▀█▄─▄▄─█─▄▄▄▄█─▄▄▄▄█─▄▄─███▄─▀█▀─▄█─▄▄─█▄─▄▄▀█▄─▄▄─█
+██─▄█▀█▄▄▄▄─██─▄▄▄██─▄─▄██─▄█▀█▄▄▄▄─█▄▄▄▄─█─██─████─█▄█─██─██─██─██─██─▄█▀█
+▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀\n"""
+        )
     grinder = input(
         f"Which grinder are we using?\n"
         f"{NEW_LINE.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
@@ -111,8 +122,25 @@ def create_brew(session):
     grind_setting = input("What's the grind setting on the grinder?\n")
     temperature = int(input("What's temp is the water at?\n"))
     dose = float(input("How much coffee are you using (grams)?\n"))
+    if espresso_mode:
+        try:
+            coffee_mass, out_mass = (
+                input("What ratio are you aiming for (coffee in:coffee out)?\n")
+                .strip()
+                .split(":")
+            )
+            target_mass = dose * float(out_mass) / float(coffee_mass)
+            print(
+                f"Okay; you should be aiming for {target_mass}. Good luck with the brew!"
+            )
+        except ValueError:
+            print("Aight I can't help you good luck.")
     coffee_out = float(input("How much coffee did you get out (grams)?\n"))
-    duration = input("How long was the brew?\n")
+    if espresso_mode:
+        duration_seconds = int(input("How many seconds was the brew?\n"))
+        duration = str(timedelta(seconds=duration_seconds))
+    else:
+        duration = input("How long was the brew (hh:mm:ss)?\n")
     thoughts = input("How's it taste? How'd the brew go?\n")
 
     new_brew = Brew(
