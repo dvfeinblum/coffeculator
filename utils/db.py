@@ -4,6 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from utils.db_models import Coffee, Roaster, Method, Brew, Grinder, Roast
 
 
+NEW_LINE = "\n"
+
+
 def get_session():
     engine = create_engine(
         "postgresql://postgres:postgres@localhost:5432/coffeeculator"
@@ -12,27 +15,43 @@ def get_session():
     return session()
 
 
-def list_objects(session, db_object):
-    ids = []
-    for obj in session.query(db_object):
-        ids.append(obj.id)
-        print(obj)
-    return ids
+def prompt_method():
+    return input(
+        f"Which method are we using?\n{NEW_LINE.join([method.value + '. ' + method.name for method in Method])}\n"
+    )
 
 
 def list_roasters(session):
     print("Roasters we know about:")
-    return list_objects(session, Roaster)
+    ids = []
+    for obj in session.query(Roaster):
+        obj_id = obj.id
+        ids.append(obj_id)
+        print(f"{obj_id}. {obj}")
+    return ids
 
 
 def list_coffees(session):
-    print("Coffees we know about:")
-    return list_objects(session, Coffee)
+    ids = []
+    for coffee, roaster in session.query(Coffee, Roaster).join(Roaster):
+        coffee_id = coffee.id
+        ids.append(coffee_id)
+        print(f"{coffee_id}. {coffee} from {roaster}")
+    return ids
 
 
 def list_brews(session):
-    print("All brews:")
-    return list_objects(session, Brew)
+    try:
+        method = Method(prompt_method()).name
+    except AttributeError:
+        print("Not a valid method.")
+        exit(1)
+    ids = []
+    for obj in session.query(Brew).filter(Brew.method == method):
+        obj_id = obj.id
+        ids.append(obj_id)
+        print(f"{obj_id}. {obj}")
+    return ids
 
 
 def create_roaster(session) -> int:
@@ -63,10 +82,9 @@ def create_coffee(session):
             create_coffee(session)
 
     name = input("Next, what's the name of the coffee?\n")
-    new_line = "\n"
     roast = input(
         f"And finally, what's the roast?\n"
-        f"{new_line.join([str(roast.value) + '. ' + roast.name for roast in Roast])}\n"
+        f"{NEW_LINE.join([str(roast.value) + '. ' + roast.name for roast in Roast])}\n"
     )
     new_coffee = Coffee(name=name, roast=Roast(roast).name, roaster=roaster_id)
     session.add(new_coffee)
@@ -85,13 +103,10 @@ def create_brew(session):
     if coffee_id not in valid_coffees:
         print("Not a valid coffee. Try again!")
         create_brew(session)
-    new_line = "\n"
-    method = input(
-        f"Which method are we using?\n{new_line.join([method.value + '. ' + method.name for method in Method])}\n"
-    )
+    method = prompt_method()
     grinder = input(
         f"Which grinder are we using?\n"
-        f"{new_line.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
+        f"{NEW_LINE.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
     )
     grind_setting = input("What's the grind setting on the grinder?\n")
     temperature = int(input("What's temp is the water at?\n"))

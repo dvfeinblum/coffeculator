@@ -43,9 +43,10 @@ class Brew(Base):
 
     def __str__(self):
         return (
-            f"Brew {self.id}: {self.method} @ {self.temperature}ºF made with the {self.grinder} set at"
+            f"{self.method} @ {self.temperature}ºF made with the {self.grinder} set at"
             f" {self.grind_setting} on"
-            f" {self.date.strftime('%Y-%m-%d at %H:%M:%S')}"
+            f" {self.date.strftime('%Y-%m-%d at %H:%M:%S')}\n"
+            f"{self.thoughts}"
         )
 
 
@@ -57,7 +58,7 @@ class Coffee(Base):
     roast = Column(String)
 
     def __str__(self):
-        return f"{self.id}. {self.name} ({self.roast} roast)"
+        return f"{self.name} ({self.roast} roast)"
 
 
 class Roaster(Base):
@@ -67,4 +68,4 @@ class Roaster(Base):
     location = Column(String)
 
     def __str__(self):
-        return f"{self.id}. {self.name} from {self.location}"
+        return f"{self.name} from {self.location}"
