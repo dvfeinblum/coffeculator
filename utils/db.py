@@ -184,7 +184,7 @@ def create_brew(session):
     thoughts = input("How's it taste? How'd the brew go?\n")
 
     new_brew.coffee = coffee_id
-    new_brew.method = Method(method).name
+    new_brew.method = method
     new_brew.grinder = Grinder(grinder).name
     new_brew.grind_setting = grind_setting
     new_brew.dose = dose
