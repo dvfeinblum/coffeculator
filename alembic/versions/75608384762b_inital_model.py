@@ -5,8 +5,6 @@ Revises:
 Create Date: 2022-02-27 19:58:48.873121
 
 """
-import enum
-
 from alembic import op
 from sqlalchemy import Column, ForeignKey, func
 from sqlalchemy.dialects import postgresql as pg

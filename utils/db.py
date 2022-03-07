@@ -1,12 +1,24 @@
 from datetime import timedelta
+import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from utils.db_models import Coffee, Roaster, Method, Brew, Grinder, Roast
-
+from utils.db_models import (
+    Coffee,
+    Roaster,
+    Method,
+    Brew,
+    Grinder,
+    Roast,
+    EspressoDetail,
+)
 
 NEW_LINE = "\n"
+
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")  # nosec
 
 
 def get_session():
@@ -23,10 +35,9 @@ def prompt_method():
     )
 
 
-def list_roasters(session):
-    print("Roasters we know about:")
+def list_and_print_query_results(result_set):
     ids = []
-    for obj in session.query(Roaster):
+    for obj in result_set:
         obj_id = obj.id
         ids.append(obj_id)
         print(f"{obj_id}. {obj}")
@@ -42,21 +53,23 @@ def list_coffees(session):
     return ids
 
 
+def list_roasters(session):
+    return list_and_print_query_results(session.query(Roaster))
+
+
 def list_brews(session):
     try:
         method = Method(prompt_method()).name
+        return list_and_print_query_results(
+            session.query(Brew).filter(Brew.method == method)
+        )
     except AttributeError:
         print("Not a valid method.")
         exit(1)
-    ids = []
-    for obj in session.query(Brew).filter(Brew.method == method):
-        obj_id = obj.id
-        ids.append(obj_id)
-        print(f"{obj_id}. {obj}")
-    return ids
 
 
 def create_roaster(session) -> int:
+    clear_screen()
     name = input("What's this roaster called?\n")
     loc = input("Where's this roaster from?\n")
     new_roaster = Roaster(name=name, location=loc)
@@ -67,6 +80,7 @@ def create_roaster(session) -> int:
 
 
 def create_coffee(session):
+    clear_screen()
     print(
         "Which roaster is this coffee from? If you don't see your roaster just press enter.\n"
     )
@@ -82,7 +96,6 @@ def create_coffee(session):
         if roaster_int not in valid_roasters:
             print("Erm.. that's not a valid roaster.")
             create_coffee(session)
-
     name = input("Next, what's the name of the coffee?\n")
     roast = input(
         f"And finally, what's the roast?\n"
@@ -96,6 +109,8 @@ def create_coffee(session):
 
 
 def create_brew(session):
+    new_espresso_detail = EspressoDetail()
+    new_brew = Brew()
     print("Which coffee are we using?")
     valid_coffees = list_coffees(session)
     try:
@@ -105,8 +120,10 @@ def create_brew(session):
     if coffee_id not in valid_coffees:
         print("Not a valid coffee. Try again!")
         create_brew(session)
+    clear_screen()
     method = prompt_method()
     espresso_mode = method in ("3", "4")
+    clear_screen()
     if espresso_mode:
         print(
             """Entering\n
@@ -124,17 +141,24 @@ def create_brew(session):
     dose = float(input("How much coffee are you using (grams)?\n"))
     if espresso_mode:
         try:
-            coffee_mass, out_mass = (
-                input("What ratio are you aiming for (coffee in:coffee out)?\n")
-                .strip()
-                .split(":")
+            preinfusion_seconds = int(
+                input("How many seconds of preinfusion are we doing?\n")
             )
+            preinfusion_duration = str(timedelta(seconds=preinfusion_seconds))
+            ratio_str = input(
+                "What ratio are you aiming for (coffee in:coffee out)?\n"
+            ).strip()
+            new_espresso_detail.ratio = ratio_str
+            new_espresso_detail.preinfusion_duration = preinfusion_duration
+
+            coffee_mass, out_mass = ratio_str.split(":")
             target_mass = dose * float(out_mass) / float(coffee_mass)
             print(
                 f"Okay; you should be aiming for {target_mass}. Good luck with the brew!"
             )
         except ValueError:
             print("Aight I can't help you good luck.")
+
     coffee_out = float(input("How much coffee did you get out (grams)?\n"))
     if espresso_mode:
         duration_seconds = int(input("How many seconds was the brew?\n"))
@@ -143,19 +167,24 @@ def create_brew(session):
         duration = input("How long was the brew (hh:mm:ss)?\n")
     thoughts = input("How's it taste? How'd the brew go?\n")
 
-    new_brew = Brew(
-        coffee=coffee_id,
-        method=Method(method).name,
-        grinder=Grinder(grinder).name,
-        grind_setting=grind_setting,
-        dose=dose,
-        temperature=temperature,
-        coffee_out=coffee_out,
-        duration=duration,
-        thoughts=thoughts,
-    )
+    new_brew.coffee = coffee_id
+    new_brew.method = Method(method).name
+    new_brew.grinder = Grinder(grinder).name
+    new_brew.grind_setting = grind_setting
+    new_brew.dose = dose
+    new_brew.temperature = temperature
+    new_brew.coffee_out = coffee_out
+    new_brew.duration = duration
+    new_brew.thoughts = thoughts
+
     session.add(new_brew)
     session.flush()
     session.refresh(new_brew)
     print(new_brew)
+
+    if espresso_mode:
+        new_espresso_detail.brew = new_brew.id
+        session.add(new_espresso_detail)
+        session.flush()
+        print(new_espresso_detail)
     return new_brew.id

@@ -61,6 +61,16 @@ class Coffee(Base):
         return f"{self.name} ({self.roast} roast)"
 
 
+class EspressoDetail(Base):
+    __tablename__ = "espresso_detail"
+    brew = Column(ForeignKey("brew.id"), primary_key=True, autoincrement=True)
+    ratio = Column(String)
+    preinfusion_duration = Column(String)
+
+    def __str__(self):
+        return f"{self.brew}. ratio of {self.ratio} with {self.preinfusion_duration} preinfusion"
+
+
 class Roaster(Base):
     __tablename__ = "roaster"
     id = Column(Integer, primary_key=True, autoincrement=True)
