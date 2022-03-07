@@ -108,9 +108,23 @@ def create_coffee(session):
     return new_coffee.id
 
 
+def present_previous_brew_details(coffee_id, method, session):
+    last_brew = (
+        session.query(Brew)
+        .filter(Brew.method == method, Brew.coffee == coffee_id)
+        .order_by(Brew.id.desc())
+        .first()
+    )
+    if last_brew:
+        print(
+            f"Here's some info about the last time we brewed this coffee\n{last_brew}"
+        )
+
+
 def create_brew(session):
     new_espresso_detail = EspressoDetail()
     new_brew = Brew()
+    clear_screen()
     print("Which coffee are we using?")
     valid_coffees = list_coffees(session)
     try:
@@ -121,17 +135,19 @@ def create_brew(session):
         print("Not a valid coffee. Try again!")
         create_brew(session)
     clear_screen()
-    method = prompt_method()
-    espresso_mode = method in ("3", "4")
+    method_key = prompt_method()
+    espresso_mode = method_key in ("3", "4")
+    method = Method(method_key).name
     clear_screen()
     if espresso_mode:
         print(
-            """Entering\n
-███████████████████████████████████████████████████████████████████████████
+            """Entering
+███████████████████████████████████████████████████████████████████████████™
 █▄─▄▄─█─▄▄▄▄█▄─▄▄─█▄─▄▄▀█▄─▄▄─█─▄▄▄▄█─▄▄▄▄█─▄▄─███▄─▀█▀─▄█─▄▄─█▄─▄▄▀█▄─▄▄─█
 ██─▄█▀█▄▄▄▄─██─▄▄▄██─▄─▄██─▄█▀█▄▄▄▄─█▄▄▄▄─█─██─████─█▄█─██─██─██─██─██─▄█▀█
-▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀\n"""
+▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀"""
         )
+    present_previous_brew_details(coffee_id, method, session)
     grinder = input(
         f"Which grinder are we using?\n"
         f"{NEW_LINE.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
