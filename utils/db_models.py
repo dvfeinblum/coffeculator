@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, Numeric, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 
@@ -46,7 +46,7 @@ class Brew(Base):
             f"{self.method} @ {self.temperature}ºF made with the {self.grinder} set at"
             f" {self.grind_setting} on"
             f" {self.date.strftime('%Y-%m-%d at %H:%M:%S')}\n"
-            f"{self.thoughts}"
+            f"{self.thoughts} It took {self.duration}."
         )
 
 
