@@ -196,11 +196,9 @@ def create_brew(session):
     session.add(new_brew)
     session.flush()
     session.refresh(new_brew)
-    print(new_brew)
 
     if espresso_mode:
         new_espresso_detail.brew = new_brew.id
         session.add(new_espresso_detail)
         session.flush()
-        print(new_espresso_detail)
     return new_brew.id
