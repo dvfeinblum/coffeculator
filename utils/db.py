@@ -162,12 +162,17 @@ def create_brew(session):
             )
             preinfusion_duration = str(timedelta(seconds=preinfusion_seconds))
             ratio_str = input(
-                "What ratio are you aiming for (coffee in:coffee out)?\n"
+                "What ratio are you aiming for (press enter for 1:2.5)?\n"
             ).strip()
-            new_espresso_detail.ratio = ratio_str
-            new_espresso_detail.preinfusion_duration = preinfusion_duration
+            if ":" in ratio_str:
+                new_espresso_detail.ratio = ratio_str
+                new_espresso_detail.preinfusion_duration = preinfusion_duration
 
-            coffee_mass, out_mass = ratio_str.split(":")
+                coffee_mass, out_mass = ratio_str.split(":")
+            else:
+                # default to 1:2.5 because that's my fave
+                coffee_mass = 1.0
+                out_mass = 2.5
             target_mass = dose * float(out_mass) / float(coffee_mass)
             print(
                 f"Okay; you should be aiming for {target_mass}. Good luck with the brew!"
