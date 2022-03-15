@@ -108,7 +108,7 @@ def create_coffee(session):
     return new_coffee.id
 
 
-def present_previous_brew_details(coffee_id, method, session):
+def previous_brew_details(coffee_id, method, session) -> Brew:
     last_brew = (
         session.query(Brew)
         .filter(Brew.method == method, Brew.coffee == coffee_id)
@@ -117,8 +117,10 @@ def present_previous_brew_details(coffee_id, method, session):
     )
     if last_brew:
         print(
-            f"Here's some info about the last time we brewed this coffee\n{last_brew}"
+            f"Here's some info about the last time we brewed this coffee.\n{last_brew}\n"
+            f"If you'd like to reuse these settings, just press enter at each prompt.\n"
         )
+    return last_brew
 
 
 def create_brew(session):
@@ -147,32 +149,43 @@ def create_brew(session):
 ██─▄█▀█▄▄▄▄─██─▄▄▄██─▄─▄██─▄█▀█▄▄▄▄─█▄▄▄▄─█─██─████─█▄█─██─██─██─██─██─▄█▀█
 ▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀"""
         )
-    present_previous_brew_details(coffee_id, method, session)
-    grinder = input(
-        f"Which grinder are we using?\n"
-        f"{NEW_LINE.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
+    previous_brew = previous_brew_details(coffee_id, method, session)
+    grinder = (
+        input(
+            f"Which grinder are we using?\n"
+            f"{NEW_LINE.join([grinder.value + '. ' + grinder.name for grinder in Grinder])}\n"
+        )
+        or Grinder[previous_brew.grinder].value
     )
-    grind_setting = input("What's the grind setting on the grinder?\n")
-    temperature = int(input("What's temp is the water at?\n"))
-    dose = float(input("How much coffee are you using (grams)?\n"))
+    grind_setting = (
+        input("What's the grind setting on the grinder?\n")
+        or previous_brew.grind_setting
+    )
+    temperature = int(
+        input("What's temp is the water at?\n") or previous_brew.temperature
+    )
+    dose = float(
+        input("How much coffee are you using (grams)?\n") or previous_brew.dose
+    )
     if espresso_mode:
         try:
             preinfusion_seconds = int(
-                input("How many seconds of preinfusion are we doing?\n")
+                input(
+                    "How many seconds of preinfusion are we doing (leave blank for 0)?\n"
+                )
+                or 0
             )
             preinfusion_duration = str(timedelta(seconds=preinfusion_seconds))
-            ratio_str = input(
-                "What ratio are you aiming for (press enter for 1:2.5)?\n"
-            ).strip()
-            if ":" in ratio_str:
-                new_espresso_detail.ratio = ratio_str
-                new_espresso_detail.preinfusion_duration = preinfusion_duration
+            ratio_str = (
+                input(
+                    "What ratio are you aiming for (press enter for 1:2.5)?\n"
+                ).strip()
+                or "1:2.5"
+            )
+            new_espresso_detail.ratio = ratio_str
+            new_espresso_detail.preinfusion_duration = preinfusion_duration
 
-                coffee_mass, out_mass = ratio_str.split(":")
-            else:
-                # default to 1:2.5 because that's my fave
-                coffee_mass = 1.0
-                out_mass = 2.5
+            coffee_mass, out_mass = ratio_str.split(":")
             target_mass = dose * float(out_mass) / float(coffee_mass)
             print(
                 f"Okay; you should be aiming for {target_mass}. Good luck with the brew!"
@@ -186,7 +199,10 @@ def create_brew(session):
         duration = str(timedelta(seconds=duration_seconds))
     else:
         duration = input("How long was the brew (hh:mm:ss)?\n")
-    thoughts = input("How's it taste? How'd the brew go?\n")
+    thoughts = (
+        input("How's it taste? How'd the brew go?\n")
+        or "I left this blank because there wasn't much to say."
+    )
 
     new_brew.coffee = coffee_id
     new_brew.method = method
