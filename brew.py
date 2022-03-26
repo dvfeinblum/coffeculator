@@ -7,6 +7,7 @@ from utils.db import (
     create_brew,
     create_roaster,
     list_brews,
+    list_metrics,
 )
 
 CHOICES = [
@@ -26,13 +27,16 @@ if __name__ == "__main__":
         """
 █▀▀ █▀▀█ █▀▀ █▀▀ █▀▀ █▀▀ █▀▀ █░░█ █░░ █▀▀█ ▀▀█▀▀ █▀▀█ █▀▀█™
 █░░ █░░█ █▀▀ █▀▀ █▀▀ █▀▀ █░░ █░░█ █░░ █▄▄█ ░░█░░ █░░█ █▄▄▀
-▀▀▀ ▀▀▀▀ ▀░░ ▀░░ ▀▀▀ ▀▀▀ ▀▀▀ ░▀▀▀ ▀▀▀ ▀░░▀ ░░▀░░ ▀▀▀▀ ▀░▀▀\n"""
+▀▀▀ ▀▀▀▀ ▀░░ ▀░░ ▀▀▀ ▀▀▀ ▀▀▀ ░▀▀▀ ▀▀▀ ▀░░▀ ░░▀░░ ▀▀▀▀ ▀░▀▀"""
+    )
+    list_metrics(sesh)
+    print(
         "How about you tell me what you'd like to do?\n"
         "1 - List Coffees\n"
         "2 - List Roasters\n"
         "3 - Create Coffee\n"
         "4 - Create Roaster\n"
-        "To start a new brew, just press enter!"
+        f"To start a new brew, just press enter!"
     )
     try:
         usr_choice = int(input())

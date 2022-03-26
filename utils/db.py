@@ -1,7 +1,7 @@
 from datetime import timedelta
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
 from utils.db_models import (
@@ -66,6 +66,18 @@ def list_brews(session):
     except AttributeError:
         print("Not a valid method.")
         exit(1)
+
+
+def list_metrics(session):
+    brew_cnt, tot_coffee, tot_brewtime = session.query(
+        func.count(Brew.id),
+        func.sum(Brew.coffee_out),
+        func.sum(Brew.duration),
+    ).all()[0]
+    print(
+        f"We've made {brew_cnt} brews, producing {int(tot_coffee)}g of coffee in "
+        f"{int(tot_brewtime.total_seconds()/60)} minutes.\n"
+    )
 
 
 def create_roaster(session) -> int:

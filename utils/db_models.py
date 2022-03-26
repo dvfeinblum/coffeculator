@@ -25,6 +25,7 @@ class Roast(enum.Enum):
 class Grinder(enum.Enum):
     jx_pro = "1"
     baratza_encore = "2"
+    silenzio = "3"
 
 
 class Brew(Base):
