@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, Boolean
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 
@@ -32,6 +32,7 @@ class Brew(Base):
     __tablename__ = "brew"
     id = Column(Integer, primary_key=True, autoincrement=True)
     coffee = Column(ForeignKey("coffee.id"))
+    is_half_caff = Column(Boolean, server_default="false")
     method = Column(String)
     grinder = Column(String)
     grind_setting = Column(String)
@@ -43,11 +44,12 @@ class Brew(Base):
     date = Column(DateTime(timezone=True), server_default=func.now())
 
     def __str__(self):
+        half_caff_text = "A half caff brew, " if self.is_half_caff else ""
         return (
-            f"{self.method} @ {self.temperature}ºF made with the {self.grinder} set at"
+            f"{half_caff_text}{self.method} @ {self.temperature}ºF made with the {self.grinder} set at"
             f" {self.grind_setting} on"
             f" {self.date.strftime('%Y-%m-%d at %H:%M:%S')}\n"
-            f"{self.thoughts} It took {self.duration}."
+            f"{self.thoughts} It took {self.duration}"
         )
 
 

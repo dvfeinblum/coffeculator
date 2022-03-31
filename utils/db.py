@@ -148,6 +148,7 @@ def create_brew(session):
     if coffee_id not in valid_coffees:
         print("Not a valid coffee. Try again!")
         create_brew(session)
+    is_half_caff = True if input("Is this brew half-caff (blank for nah)? ") else False
     clear_screen()
     method_key = prompt_method()
     espresso_mode = method_key in ("3", "4")
@@ -217,6 +218,7 @@ def create_brew(session):
     )
 
     new_brew.coffee = coffee_id
+    new_brew.is_half_caff = is_half_caff
     new_brew.method = method
     new_brew.grinder = Grinder(grinder).name
     new_brew.grind_setting = grind_setting
