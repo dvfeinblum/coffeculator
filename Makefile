@@ -7,7 +7,7 @@ run-alembic:
 	alembic upgrade head
 
 brew:
-	./brew.py
+	./coffeeculator.py
 
 clean:
 	docker stop coffeeculator-postgres-1 || true

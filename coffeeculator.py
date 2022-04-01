@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+from utils.brew import create_brew
 from utils.db import (
     get_session,
     list_coffees,
     create_coffee,
     list_roasters,
-    create_brew,
     create_roaster,
     list_brews,
     list_metrics,
