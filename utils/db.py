@@ -56,10 +56,12 @@ def list_metrics(session):
         func.sum(Brew.coffee_out),
         func.sum(Brew.duration),
     ).all()[0]
-    num_drinks_today = (
-        session.query(func.count(Brew.id))
+    # I consider 15g of coffee to basically be equal to a single cup
+    num_drinks_today = int(
+        session.query(func.sum(Brew.dose))
         .where(Brew.date >= datetime.now().replace(hour=0, minute=0, second=0))
         .all()[0][0]
+        / 15
     )
     print(
         f"We've made {brew_cnt} brews ({num_drinks_today} of which were made today), producing {int(tot_coffee)}g of "
