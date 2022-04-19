@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, cast, Date
 from sqlalchemy.orm import sessionmaker
 
 from utils.db_models import (
@@ -56,13 +56,18 @@ def list_metrics(session):
         func.sum(Brew.coffee_out),
         func.sum(Brew.duration),
     ).all()[0]
+
     # I consider 15g of coffee to basically be equal to a single cup
     num_drinks_today = int(
-        session.query(func.sum(Brew.dose))
-        .where(Brew.date >= datetime.now().replace(hour=0, minute=0, second=0))
-        .all()[0][0]
+        (
+            session.query(func.sum(Brew.dose))
+            .where(Brew.date >= cast(func.now(), Date))
+            .all()[0][0]
+            or 0
+        )
         / 15
     )
+
     print(
         f"We've made {brew_cnt} brews ({num_drinks_today} of which were made today), producing {int(tot_coffee)}g of "
         f"coffee in "
