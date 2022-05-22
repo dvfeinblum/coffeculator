@@ -12,3 +12,9 @@ brew:
 clean:
 	docker stop coffeeculator-postgres-1 || true
 	docker rm coffeeculator-postgres-1 || true
+
+db-dump:
+	./scripts/db-dump.sh
+
+db-restore:
+	pg_restore -h localhost -U postgres -d coffeeculator
