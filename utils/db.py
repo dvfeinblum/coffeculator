@@ -1,4 +1,4 @@
-from datetime import datetime
+import sys
 
 from sqlalchemy import create_engine, func, cast, Date
 from sqlalchemy.orm import sessionmaker
@@ -42,12 +42,13 @@ def list_roasters(session):
 def list_brews(session):
     try:
         method = Method(prompt_method()).name
-        return list_and_print_query_results(
-            session.query(Brew).filter(Brew.method == method)
-        )
     except AttributeError:
         print("Not a valid method.")
-        exit(1)
+        sys.exit(1)
+
+    return list_and_print_query_results(
+        session.query(Brew).filter(Brew.method == method)
+    )
 
 
 def list_metrics(session):

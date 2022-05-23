@@ -23,7 +23,7 @@ CHOICES = [
 if __name__ == "__main__":
     sesh = get_session()
     print(
-        f"Heyo, welcome to the"
+        "Heyo, welcome to the"
         """
 █▀▀ █▀▀█ █▀▀ █▀▀ █▀▀ █▀▀ █▀▀ █░░█ █░░ █▀▀█ ▀▀█▀▀ █▀▀█ █▀▀█™
 █░░ █░░█ █▀▀ █▀▀ █▀▀ █▀▀ █░░ █░░█ █░░ █▄▄█ ░░█░░ █░░█ █▄▄▀
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         "2 - List Roasters\n"
         "3 - Create Coffee\n"
         "4 - Create Roaster\n"
-        f"To start a new brew, just press enter!"
+        "To start a new brew, just press enter!"
     )
     try:
         usr_choice = int(input())

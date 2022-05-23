@@ -16,6 +16,8 @@ mako==1.1.6
     # via alembic
 markupsafe==2.1.0
     # via mako
+psycopg2==2.9.3
+    # via -r requirements.in
 sqlalchemy==1.4.31
     # via
     #   -r requirements.in
