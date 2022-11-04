@@ -1,4 +1,5 @@
 from datetime import timedelta
+from textwrap import dedent
 
 from utils.db import list_coffees, list_previous_brew_details
 from utils.db_models import Grinder, Method, Brew, EspressoDetail
@@ -27,11 +28,13 @@ def create_brew(session):
     is_espresso_mode = method_key in ("3", "4")
     if is_espresso_mode:
         print(
-            """Entering
-███████████████████████████████████████████████████████████████████████████™
-█▄─▄▄─█─▄▄▄▄█▄─▄▄─█▄─▄▄▀█▄─▄▄─█─▄▄▄▄█─▄▄▄▄█─▄▄─███▄─▀█▀─▄█─▄▄─█▄─▄▄▀█▄─▄▄─█
-██─▄█▀█▄▄▄▄─██─▄▄▄██─▄─▄██─▄█▀█▄▄▄▄─█▄▄▄▄─█─██─████─█▄█─██─██─██─██─██─▄█▀█
-▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀"""
+            dedent(
+                """Entering
+                     ███████████████████████████████████████████████████████████████████████████™
+                     █▄─▄▄─█─▄▄▄▄█▄─▄▄─█▄─▄▄▀█▄─▄▄─█─▄▄▄▄█─▄▄▄▄█─▄▄─███▄─▀█▀─▄█─▄▄─█▄─▄▄▀█▄─▄▄─█
+                     ██─▄█▀█▄▄▄▄─██─▄▄▄██─▄─▄██─▄█▀█▄▄▄▄─█▄▄▄▄─█─██─████─█▄█─██─██─██─██─██─▄█▀█
+                     ▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▀▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▀▄▄▄▄▄▀"""
+            )
         )
     previous_brew = list_previous_brew_details(
         new_brew.coffee, new_brew.method, session
